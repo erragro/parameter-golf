@@ -1,4 +1,5 @@
-data/tokenizers
+data/tokenizers/*.bin
+data/tokenizers/*.vocab
 __pycache__/
 .DS_Store
 modded-nanogpt/
