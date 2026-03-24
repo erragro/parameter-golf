@@ -19,14 +19,24 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 def parse_log(path: str) -> dict:
     with open(path) as f:
         content = f.read()
-    bpb  = re.search(r"val_bpb[:\s]+([\d.]+)", content)
-    loss = re.search(r"val_loss[:\s]+([\d.]+)", content)
-    size = re.search(r"compressed.*?(\d+)\s*bytes", content)
-    return {
-        "val_bpb":  float(bpb.group(1))  if bpb  else None,
-        "val_loss": float(loss.group(1)) if loss else None,
-        "bytes":    int(size.group(1))   if size else None,
-    }
+
+    # Prefer the exact final roundtrip line: final_int8_zlib_roundtrip_exact val_bpb:X
+    exact = re.search(r"final_int8_zlib_roundtrip_exact val_loss:([\d.]+) val_bpb:([\d.]+)", content)
+    if exact:
+        val_loss = float(exact.group(1))
+        val_bpb  = float(exact.group(2))
+    else:
+        # Fall back to last val_bpb occurrence in the log
+        all_bpb  = re.findall(r"val_bpb[:\s]+([\d.]+)", content)
+        all_loss = re.findall(r"val_loss[:\s]+([\d.]+)", content)
+        val_bpb  = float(all_bpb[-1])  if all_bpb  else None
+        val_loss = float(all_loss[-1]) if all_loss else None
+
+    # Model size: "Total submission size int8+zlib: NNNN bytes"
+    size_match = re.search(r"Total submission size.*?:\s*(\d+)\s*bytes", content)
+    size = int(size_match.group(1)) if size_match else None
+
+    return {"val_bpb": val_bpb, "val_loss": val_loss, "bytes": size}
 
 
 def main() -> None:
