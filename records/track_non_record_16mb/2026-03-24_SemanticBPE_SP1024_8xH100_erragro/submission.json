@@ -1,0 +1,15 @@
+{
+  "author": "Surajit Chaudhuri",
+  "github_id": "erragro",
+  "name": "Semantic BPE Tokenizer — Function Word Downsampling",
+  "blurb": "Novel hypothesis: downsampling grammatical function words (the, a, is, was, etc.) at 30% retention during SentencePiece BPE training forces the vocabulary to allocate more capacity to content-bearing tokens, making BigramHash features more informative. SOTA repro baseline (Int6 QAT + BigramHash + SWA + 10L) achieved pre_quant val_bpb 1.1619 at wallclock stop. Semantic BPE controlled experiment (Run A vs Run B) in progress. Also includes PyTorch 2.4 compatibility fix for enable_gqa in scaled_dot_product_attention.",
+  "date": "2026-03-24T12:00:00Z",
+  "track": "non-record-unlimited-compute-16mb",
+  "val_bpb": 1.1619,
+  "pre_quant_val_bpb": 1.1619,
+  "step_stop": 5478,
+  "wallclock_seconds": 599.983,
+  "bytes_total": 16867418,
+  "bytes_model_int8_zlib": 16814365,
+  "bytes_code": 53053
+}
